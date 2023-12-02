@@ -13,43 +13,38 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 html,body,h1,h2,h3,h4,h5 {font-family: "Noto Sans", sans-serif}
-
 .container {
-    display: flex;
-    flex-direction: column; /* Changes to column layout */
-    justify-content: space-between;
-}
+            display: flex;
+            justify-content: space-between;
+            padding-left: 2%;
+            padding-bottom: 2%;
+            padding-right: 2%;
+        }
 
-.top-section {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
+        .side-by-side {
+            width: 49%; /* Adjusts the width to be less than half of the container to fit side by side */
+            box-sizing: border-box; /* Ensures that padding and border are included in the width */
+            padding: 10px; /* Adds some spacing inside the divs */
+            height: 400px;
+            /*display: flex;*/
+            justify-content: center; /* Center aligns horizontally */
+            align-items: center; /* Center aligns vertically */
+            text-align: center;
+        }
 
-.side-by-side {
-    width: 49%;
-    box-sizing: border-box;
-    padding: 10px;
-    height: 400px;
-    text-align: center;
-}
+        .chart-container {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 400px; /* Set to the desired height */
+            padding-bottom: 10%;
+        }
 
-.chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 300px;
-    padding-bottom: 10%;
-}
-
-.chart-container canvas {
-    max-width: 75%;
-}
-
-.line-chart-section {
-    width: 100%;
-    /* Additional styling for the line chart section if needed */
-}
+        /* Optional: Specific styles for the chart canvas if needed */
+        .chart-container canvas {
+            max-width: 100%; /* Ensures the chart is not wider than the container */
+            /* Additional styling can go here */
+        }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -83,7 +78,9 @@ height:40px;
     </div>
     <div class="w3-col s8 w3-bar">
       <span>Welcome, <strong>Chiranjib</strong></span><br>
-
+      <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i></a>
+      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-user"></i></a> -->
+      <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-cog"></i></a> -->
     </div>
   </div>
   <hr>
@@ -92,8 +89,8 @@ height:40px;
   </div>
   <div class="w3-bar-block">
     <a href="{% url 'index' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i> Overview</a>
-    <a href="{% url 'customers' %}" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i> Customers</a>
-    <a href="{% url 'orders' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cart-plus fa-fw fa-solid"></i> Orders</a>
+    <a href="{% url 'customers' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i> Customers</a>
+    <a href="{% url 'orders' %}" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-cart-plus fa-fw fa-solid"></i> Orders</a>
     <a href="{% url 'products' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-gift fa-solid fa-fw"></i> Products</a>
   </div>
 </nav>
@@ -107,56 +104,50 @@ height:40px;
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:22px">
-    <h5><b><i class="fa fa-commenting"></i> Customer Analysis</b></h5>
+    <h5><b><i class="fa fa-truck"></i> Order Statistics</b></h5>
   </header>
 
+  <div class="w3-container">
+    <h5>Recent Orders</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <tr>
+        <th bgcolor="#2196F3">Order ID</th>
+        <th bgcolor="#2196F3">Customer ID</th>
+        <th bgcolor="#2196F3">Date & Time</th>
+        <th bgcolor="#2196F3">Status</th>
+      </tr>
+      {% for row in order_list %}
+      <tr>
+        <td>{{row.order_id}}</td>
+        <td>{{row.customer_id}}%</td>
+        <td>{{row.dt}}</td>
+        <td>{{row.state}}</td>
+      </tr>
+      {% endfor %}
+    </table><br>
+  </div>
+  <br>
   <div class="container">
-    <div class="top-section">
     <div class="side-by-side">
         <!-- Content for first div -->
-        <h5>Top Statistics</h5><br><br>
-        <table class="w3-table w3-striped w3-white">
-          <tr>
-            <td>Average Spending Per Customer</td>
-            <td><i>{{ avg_spend }}</i></td>
-          </tr>
-          <tr>
-            <td>Average Number of Orders Per Customer</td>
-            <td><i>{{ order_pc }}</i></td>
-          </tr>
-          <tr>
-            <td>Average Review Score</td>
-            <td><i>{{ avg_rev }}</i></td>
-          </tr>
-          <tr>
-            <td>Number of Repeat Customers</td>
-            <td><i>{{ mult_orders }}</i></td>
-          </tr>
-          <tr>
-            <td>Number of Customers Who Left a Review</td>
-            <td><i>{{ tot_revs }}</i></td>
-          </tr>
-        </table>
+        <h5>Distribution of Orders by Status</h5>
+        <div class="chart-container">
+          <canvas id="myPieChart"></canvas>
+        </div>
         
     </div>
     <div class="side-by-side">
         <!-- Content for second div -->
-        <h5>Expenditure Analysis</h5>
+        <h5>Average Delay in Order Processing Per Quarter (in hrs)</h5>
         <div class="chart-container">
-          <canvas id="myPieChart"></canvas>
-        </div>
+          <canvas id="myLineChart"></canvas>
         </div>
     </div>
-
-    <div class="line-chart-section">
-      <h5 style="padding-left: 2%;">New Customers Onboarded Per Month</h5>
-      <div style="height: 450px; width: 1230px; padding: 2% 2% 5% 2%; width: 100%;">
-          <canvas id="myLineChart"></canvas>
-      </div>
   </div>
+
+
+   <!-- End page content -->
 </div>
-
-
 
 <script>
 // Get the Sidebar
@@ -182,23 +173,22 @@ function w3_close() {
   overlayBg.style.display = "none";
 }
 
-var pie_data = JSON.parse('{{ pie_chart | safe }}')
+var pie_data = JSON.parse('{{ pie_data | safe }}')
 
-// Chart options
 pie_options = {
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: true
 };
 
 // Creating the pie chart
 const pie_ctx = document.getElementById('myPieChart').getContext('2d');
 const myPieChart = new Chart(pie_ctx, {
-    type: 'doughnut',
+    type: 'pie',
     data: pie_data,
     options: pie_options
 });
 
-var line_data = JSON.parse('{{ line_plot | safe }}')
+var line_data = JSON.parse('{{ line_data | safe }}')
 
 line_options = {
   responsive: true,

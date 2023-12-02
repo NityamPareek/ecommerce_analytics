@@ -22,5 +22,7 @@ from portal import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name = 'index'),
-    path('customers', views.customers, name='customers')
+    path('customers', views.customers, name='customers'),
+    path('orders', views.orders, name='orders'),
+    path('products', views.products, name='products'),
 ]

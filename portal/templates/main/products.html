@@ -46,6 +46,9 @@ height:40px;
     </div>
     <div class="w3-col s8 w3-bar">
       <span>Welcome, <strong>Chiranjib</strong></span><br>
+      <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i></a>
+      <a href="#" class="w3-bar-item w3-button"><i class="fa fa-user"></i></a> -->
+      <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-cog"></i></a> -->
     </div>
   </div>
   <hr>
@@ -53,10 +56,10 @@ height:40px;
     <h5>Dashboard</h5>
   </div>
   <div class="w3-bar-block">
-    <a href="{% url 'index' %}" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-eye fa-fw"></i> Overview</a>
+    <a href="{% url 'index' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i> Overview</a>
     <a href="{% url 'customers' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i> Customers</a>
     <a href="{% url 'orders' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cart-plus fa-fw fa-solid"></i> Orders</a>
-    <a href="{% url 'products' %}" class="w3-bar-item w3-button w3-padding"><i class="fa fa-gift fa-solid fa-fw"></i> Products</a>
+    <a href="{% url 'products' %}" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-gift fa-solid fa-fw"></i> Products</a>
   </div>
 </nav>
 
@@ -69,81 +72,36 @@ height:40px;
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:22px">
-    <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
+    <h5><b><i class="fa fa-dropbox"></i> Product Analysis</b></h5>
   </header>
 
-  <div class="w3-row-padding w3-margin-bottom">
-    <div class="w3-quarter">
-      <div class="w3-container w3-red w3-padding-16">
-        <div class="w3-left"><i class="fa fa-comment w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3>{{ num_sellers.num_sellers }}</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Sellers Onboarded</h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
-        <div class="w3-left"><i class="fa fa-eye w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3>{{ num_orders.num_orders }}</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Orders Fulfilled</h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-teal w3-padding-16">
-        <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3>{{ num_products.num_products }}</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Products in Catalog</h4>
-      </div>
-    </div>
-    <div class="w3-quarter">
-      <div class="w3-container w3-orange w3-text-white w3-padding-16">
-        <div class="w3-left"><i class="fa fa-users w3-xxxlarge"></i></div>
-        <div class="w3-right">
-          <h3>{{ num_customers.num_customers }}</h3>
-        </div>
-        <div class="w3-clear"></div>
-        <h4>Customers Served</h4>
-      </div>
-    </div>
+  <div class="w3-container">
+    <h5>Inventory Analysis</h5>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <tr>
+        <th bgcolor="#2196F3">Product Category</th>
+        <th bgcolor="#2196F3">Number of Products in Catalog</th>
+      </tr>
+      {% for row in catalog %}
+      <tr>
+        <td>{{row.product_category_name}}</td>
+        <td>{{row.total_products}}</td>
+      </tr>
+      {% endfor %}
+    </table><br>
   </div>
 
   <div class="w3-container">
-    <h5>States With Highest Orders</h5>
-    <canvas id="region_bar_plot" width="10" height="10"></canvas>
+    <h5>Best Selling Product Categories</h5>
+    <canvas id="myBarPlot" width="10" height="10"></canvas>
   </div>
-  <hr>
 
-  <div class="w3-container">
-    <h5>Recent Reviews</h5>
-    <div class="w3-row">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="{% static 'images/avatar1.png' %}" style="width:96px;height:96px">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>{{reviews.0.score}}/5 <span class="w3-opacity w3-medium">{{reviews.0.dt}}</span></h4>
-        <p>{{reviews.0.msg}}</p><br>
-      </div>
-    </div>
+  <h5 style="padding-left: 2%;">Total Sales Per Month</h5>
 
-    <div class="w3-row">
-      <div class="w3-col m2 text-center">
-        <img class="w3-circle" src="{% static 'images/avatar2.png' %}" style="width:96px;height:96px">
-      </div>
-      <div class="w3-col m10 w3-container">
-        <h4>{{reviews.1.score}}/5 <span class="w3-opacity w3-medium">{{reviews.1.dt}}</span></h4>
-        <p>{{reviews.1.msg}}</p><br>
-      </div>
-    </div>
+  <div style="height: 450px; width: 1230px; padding-left: 2%; padding-right: 2%; padding-top: 2%; padding-bottom: 5%;">
+    <canvas id="myLineChart"></canvas>
   </div>
-  <br>
+
    <!-- End page content -->
 </div>
 
@@ -171,7 +129,7 @@ function w3_close() {
   overlayBg.style.display = "none";
 }
 
-var data = JSON.parse('{{ region_chart | safe }}');
+var data = JSON.parse('{{ bar_plot | safe }}');
 
 options = {
     scales: {
@@ -205,12 +163,30 @@ options = {
 };
 
 // Create the chart with the data and options
-var region_bar_plot = new Chart(document.getElementById('region_bar_plot'), {
+var region_bar_plot = new Chart(document.getElementById('myBarPlot'), {
     type: 'bar',
     data: data,
     options: options
 });
 
+var line_data = JSON.parse('{{ line_plot | safe }}')
+
+line_options = {
+  responsive: true,
+  plugins: {
+    legend: {
+        display: false
+    }
+  },
+  maintainAspectRatio: false
+}
+
+const line_ctx = document.getElementById('myLineChart').getContext('2d');
+const myLineChart = new Chart(line_ctx, {
+  type: 'line',
+  data: line_data,
+  options: line_options
+})
 
 </script>
 
